@@ -1,6 +1,7 @@
 def solve_example(input_data):
     """
     A placeholder solver following the backtracking pattern.
+    Cambiamos cosas, si se cambiaron?
 
     Args:
         input_data (list): The problem constraints.
