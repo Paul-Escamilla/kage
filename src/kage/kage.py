@@ -34,3 +34,20 @@ def base_of_cage(k, g):
             nodos = nodos_nuevos
         G.add_nodes_from(range(nodos))
     return G
+
+
+def kage_construction_backing_track(k, g, G = None):
+    if G == None:
+        G = base_of_cage(k, g)
+    if nx.is_regular(G):
+        yield  G.copy()
+        return
+    else:
+        key_nodes = [node for node in G.nodes if k != G.degree(node)]
+        u = key_nodes[0]
+        candidatos = [v for v in key_nodes if not G.has_edge(u, v)]
+        for v in candidatos:
+            if nx.shortest_path_length(G, u, v) >= g - 1:
+                G.add_edge(u, v)
+                yield from kage_construction_backing_track(k, g, G)
+                G.remove_edge(u, v)
