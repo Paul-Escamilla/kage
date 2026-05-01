@@ -51,3 +51,14 @@ def kage_construction_backing_track(k, g, G = None):
                 G.add_edge(u, v)
                 yield from kage_construction_backing_track(k, g, G)
                 G.remove_edge(u, v)
+
+def add_node(k, g, G):
+    return "no se pudo"
+
+def jaula(k, g):
+    isomorfas = kage_construction_backing_track(k, g)
+    try:
+        return next(isomorfas).edges()
+    except StopIteration:
+        G = base_of_cage(k, g)
+        return add_node(k, g, G)
