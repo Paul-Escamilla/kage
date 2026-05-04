@@ -8,30 +8,30 @@ def base_of_cage(k, g):             # Se crea un funcion que estructura un arbol
         next_friend = 2            # Next_friend ayuda a etiquetar los nuevos nodos (2,3,4,...)
         G.add_edge(0, 1)           # Representa la arista con la que empezamos (de 0 a 1)
         for i in range(1, int(g / 2)):        # Se usa hasta g/2 para no crear cuello mas pequeño (es bipartita)
-            nodos_nuevos = nodos + 2*(k - 1)**i   # Los k - 1 se estan anidando a los nos ya existentes    
+            nodos_acumulados = nodos + 2*(k - 1)**i   # Los k - 1 se estan anidando a los nos ya existentes    
             for j in friends_down:
                 for _ in range(k-1):
                     G.add_edge(j, next_friend)    # Para cada nodo existente se le añade una arista entre el y el nuevo amigo generado
                     next_friend += 1       # Etiqueta los nuevos nodos                 
-            friends_down = [amigos for amigos in range(nodos, nodos_nuevos)] # Enlista los nodos actuales (las hojas del arbol)
-            nodos = nodos_nuevos   
+            friends_down = [amigos for amigos in range(nodos, nodos_acumulados)] # Enlista los nodos actuales (las hojas del arbol)
+            nodos = nodos_acumulados   
         G.add_nodes_from(range(nodos))  # Añade los respectivos nodos para cada nivel del arbol
     else:
         nodos = k + 1                              # Si k es impar, empezamos con un arbol de un nodo con k amigos
         friends_down = [i for i in range(1, k+1)]  # nodos actuales
         next_friend = k + 1                        # Desde ahi se empieza a etiquetar los nuevos nodos
 
-        for i in range(0, k + 1):            # Corregir
+        for i in range(1, k + 1):            # Corregir
             G.add_edge(0, i)
 
         for i in range(int((g - 1) / 2)):
-            nodos_nuevos = nodos + k*(k - 1)**i        # Parecido a cuando g es par pero k en vez de 2
+            nodos_acumulados = nodos + k*(k - 1)**i        # Parecido a cuando g es par pero k en vez de 2
             for j in friends_down:
                 for l in range(k-1):
                     G.add_edge(j, next_friend)
                     next_friend += 1
-            friends_down = [amigos for amigos in range(nodos, nodos_nuevos)]
-            nodos = nodos_nuevos
+            friends_down = [amigos for amigos in range(nodos, nodos_acumulados)]
+            nodos = nodos_acumulados
         G.add_nodes_from(range(nodos))     # Añade los respectivos nodos para cada nivel del arbol
     return G
 
