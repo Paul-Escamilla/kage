@@ -67,7 +67,7 @@ def base_tree(k, g):
 
     return G
 
-    def obtener_hojas(G):
+def obtener_hojas(G):
     # create a list of leafs
     return [n for n in G.nodes() if G.degree(n) == 1]
 
