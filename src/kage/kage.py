@@ -53,7 +53,7 @@ def kage_construction_backing_track(k, g, G = None):
                 G.remove_edge(u, v)
 
 def cage_add_node(k, g, G):
-    while not is_k_regular(G, k):
+    while not nx.is_regular(G, k):
         add_node(k, g, G)
         conectar = kage_construction_backing_track(k, g, G.copy())
         try:
