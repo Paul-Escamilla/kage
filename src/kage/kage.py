@@ -52,6 +52,15 @@ def kage_construction_backing_track(k, g, G = None):
                 yield from kage_construction_backing_track(k, g, G)
                 G.remove_edge(u, v)
 
+def cage_add_node(k, g, G):
+    while not is_k_regular(G, k):
+        add_node(k, g, G)
+        conectar = kage_construction_backing_track(k, g, G.copy())
+        try:
+            return next(conectar).edges() 
+        except StopIteration:
+            pass
+
 def add_node(k, g, G): 
     nuevo_nodo = G.number_of_nodes()
     G.add_edge(nuevo_nodo - 1, nuevo_nodo)
@@ -63,4 +72,4 @@ def jaula(k, g):
         return next(isomorfas).edges()
     except StopIteration:
         G = base_of_cage(k, g)
-        return add_node(k, g, G)
+        return cage_add_node(k, g, G)
