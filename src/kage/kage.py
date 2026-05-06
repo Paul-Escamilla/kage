@@ -44,7 +44,7 @@ def kage_construction_backing_track(k, g, G = None):
         return
     else:
         key_nodes = [node for node in G.nodes if k != G.degree(node)]
-        u = key_nodes[0]
+        u = key_nodes[-1]
         candidatos = [v for v in key_nodes if not G.has_edge(u, v)]
         for v in candidatos:
             if nx.shortest_path_length(G, u, v) >= g - 1:
