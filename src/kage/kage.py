@@ -24,7 +24,7 @@ def base_of_cage(k, g):             # Se crea un funcion que estructura un arbol
         for i in range(1, k + 1):            # Corregir
             G.add_edge(0, i)
 
-        for i in range(int((g - 1) / 2)):
+        for i in range(1, int((g - 1) / 2)):
             nodos_acumulados = nodos + k*(k - 1)**i        # Parecido a cuando g es par pero k en vez de 2
             for j in friends_down:
                 for l in range(k-1):
