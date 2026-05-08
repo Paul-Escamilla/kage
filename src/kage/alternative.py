@@ -159,3 +159,27 @@ def conectar_hojas_girth(G, k, g):
         conectar_hoja(G, hoja, hojas, etiquetas, g)
 
     return G
+
+def draw_kage(G):
+    fig, axes = plt.subplots(2, 2, figsize=(15, 15))
+    ax = axes.flatten()
+    opciones = {
+        "node_color": "lightblue",
+        "node_size": 400,
+        "font_size": 10,
+        "font_weight": "bold",
+        "edge_color": "gray",
+        "alpha": 0.8
+    }
+    layouts = [
+        (nx.kamada_kawai_layout, "Kamada-Kawai (Energía)"),
+        (nx.spectral_layout, "Espectral (Matrices)"),
+        (lambda g: nx.spring_layout(g, k=0.8, iterations=100), "Spring Layout (Resortes)"),
+        (nx.circular_layout, "Circular (Regularidad)")
+    ]
+    for i, (layout_func, title) in enumerate(layouts):
+        pos = layout_func(G)
+        nx.draw(G, pos, ax=ax[i], with_labels=True, **opciones)
+        ax[i].set_title(title, fontsize=14)
+    plt.tight_layout()
+    plt.show()    
