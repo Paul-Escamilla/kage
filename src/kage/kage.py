@@ -61,9 +61,11 @@ def cage_add_node(k, g, G):
         except StopIteration:
             pass
 
-def add_node(k, g, G): 
+def add_node(k, g, G):
     nuevo_nodo = G.number_of_nodes()
     G.add_edge(nuevo_nodo - 1, nuevo_nodo)
+    if k%2==1: 
+        G.add_edge(nuevo_nodo, nuevo_nodo+1)
     return G
 
 def jaula(k, g):
