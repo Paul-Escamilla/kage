@@ -1,4 +1,5 @@
 import networkx as nx
+import matplotlib.pyplot as plt
 
 def base_of_cage(k, g):             # Se crea un funcion que estructura un arbol para distintos valores de k y g    
     G = nx.Graph()
@@ -62,10 +63,13 @@ def cage_add_node(k, g, G):
             pass
 
 def add_node(k, g, G):
-    nuevo_nodo = G.number_of_nodes()
-    G.add_edge(nuevo_nodo - 1, nuevo_nodo)
-    if k%2==1: 
-        G.add_edge(nuevo_nodo, nuevo_nodo+1)
+    nuevo = G.number_of_nodes()
+    G.add_node(nuevo)
+    G.add_edge(nuevo - 1, nuevo)
+    if k % 2 == 1:
+        nuevo2 = nuevo + 1                 # Agregar otro nodo y conectarlo con el anterior
+        G.add_node(nuevo2)
+        G.add_edge(nuevo, nuevo2)
     return G
 
 def jaula(k, g):
