@@ -43,10 +43,15 @@ def kage_construction_backing_track(k, g, G = None):
     if nx.is_regular(G):
         yield  G.copy()
         return
+     #deficit_total = sum(k - G.degree(node) for node in G.nodes)                     #Pruning    comprueba si es posible que el grafo se vuelva k regular
+    #if deficit_total % 2 != 0:                                                       # Si los nodos con grado<k  requieren un numero impar de nodos mas
+       # return   # imposible alcanzar regularidad                                      para k entonces es imposible llegar a completar y cortamos tal rama
     else:
         key_nodes = [node for node in G.nodes if k != G.degree(node)]
         u = key_nodes[-1]
-        candidatos = [v for v in key_nodes if not G.has_edge(u, v)]
+        #u = min(key_nodes, key=lambda x: G.degree(x))   # el de menor grado
+        candidatos = [v for v in key_nodes if not G.has_edge(u, v)]             #Añadi una podada (pruning)   (posibles cambios)
+        #candidatos.sort(key=lambda v: G.degree(v))   # orden ascendente de grado
         for v in candidatos:
             if nx.shortest_path_length(G, u, v) >= g - 1:
                 G.add_edge(u, v)
