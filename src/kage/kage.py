@@ -34,20 +34,20 @@ def base_of_cage(k, g):             # Se crea un funcion que estructura un arbol
             friends_down = [amigos for amigos in range(nodos, nodos_acumulados)]
             nodos = nodos_acumulados
         G.add_nodes_from(range(nodos))     # Añade los respectivos nodos para cada nivel del arbol
-    return G
+    key_nodes = friends_down
+    return G, key_nodes
 
 
-def kage_construction_backing_track(k, g, G = None):
+def kage_construction_backing_track(k, g, G = None, key_nodes = None):
     if G == None:
-        G = base_of_cage(k, g)
-    if nx.is_regular(G):
+        G, key_nodes = base_of_cage(k, g)
+    if len(key_nodes) == 0:
         yield  G.copy()
         return
      #deficit_total = sum(k - G.degree(node) for node in G.nodes)                     #Pruning    comprueba si es posible que el grafo se vuelva k regular
     #if deficit_total % 2 != 0:                                                       # Si los nodos con grado<k  requieren un numero impar de nodos mas
        # return   # imposible alcanzar regularidad                                      para k entonces es imposible llegar a completar y cortamos tal rama
     else:
-        key_nodes = [node for node in G.nodes if k != G.degree(node)]
         u = key_nodes[-1]
         #u = min(key_nodes, key=lambda x: G.degree(x))   # el de menor grado
         candidatos = [v for v in key_nodes if not G.has_edge(u, v)]             #Añadi una podada (pruning)   (posibles cambios)
@@ -55,35 +55,49 @@ def kage_construction_backing_track(k, g, G = None):
         for v in candidatos:
             if nx.shortest_path_length(G, u, v) >= g - 1:
                 G.add_edge(u, v)
-                yield from kage_construction_backing_track(k, g, G)
+                u_gone = False
+                v_gone = False
+                if k == G.degree(u):
+                    key_nodes.remove(u)
+                    u_gone = True
+                if k == G.degree(v):
+                    key_nodes.remove(v)
+                    v_gone = True
+                yield from kage_construction_backing_track(k, g, G, key_nodes)
                 G.remove_edge(u, v)
+                if u_gone:
+                    key_nodes.append(u)
+                if v_gone:
+                    key_nodes.append(v)
 
-def cage_add_node(k, g, G):
-    while not nx.is_regular(G):
-        add_node(k, g, G)
-        conectar = kage_construction_backing_track(k, g, G.copy())
+def cage_add_node(k, g, G, key_nodes):
+    while len(key_nodes) != 0:
+        G, key_nodes = add_node(k, g, G, key_nodes)
+        conectar = kage_construction_backing_track(k, g, G.copy(), key_nodes.copy())
         try:
-            return next(conectar).edges() 
+            return next(conectar)
         except StopIteration:
             pass
 
-def add_node(k, g, G):
+def add_node(k, g, G, key_nodes):
     nuevo = G.number_of_nodes()
     G.add_node(nuevo)
     G.add_edge(nuevo - 1, nuevo)
+    key_nodes.append(nuevo)
     if k % 2 == 1:
         nuevo2 = nuevo + 1                 # Agregar otro nodo y conectarlo con el anterior
         G.add_node(nuevo2)
         G.add_edge(nuevo, nuevo2)
-    return G
+        key_nodes.append(nuevo2)
+    return G, key_nodes
 
 def jaula(k, g):
     isomorfas = kage_construction_backing_track(k, g)
     try:
-        return next(isomorfas).edges()
+        return next(isomorfas)
     except StopIteration:
-        G = base_of_cage(k, g)
-        return cage_add_node(k, g, G)
+        G, key_nodes = base_of_cage(k, g)
+        return cage_add_node(k, g, G, key_nodes)
 
         
 def draw_kage(G):
