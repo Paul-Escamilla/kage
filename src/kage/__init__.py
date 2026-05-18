@@ -1,2 +1,2 @@
-from kage import *
-from alternative import *
+from .kage import *
+from .alternative import *
