@@ -50,25 +50,29 @@ def kage_construction_backing_track(k, g, G = None, key_nodes = None):
     else:
         u = key_nodes[-1]
         #u = min(key_nodes, key=lambda x: G.degree(x))   # el de menor grado
-        candidatos = [v for v in key_nodes if not G.has_edge(u, v)]             #Añadi una podada (pruning)   (posibles cambios)
+        candidatos = selection_candidatos(u, g, G, key_nodes)           #Añadi una podada (pruning)   (posibles cambios)
         #candidatos.sort(key=lambda v: G.degree(v))   # orden ascendente de grado
         for v in candidatos:
-            if nx.shortest_path_length(G, u, v) >= g - 1:
-                G.add_edge(u, v)
-                u_gone = False
-                v_gone = False
-                if k == G.degree(u):
-                    key_nodes.remove(u)
-                    u_gone = True
-                if k == G.degree(v):
-                    key_nodes.remove(v)
-                    v_gone = True
-                yield from kage_construction_backing_track(k, g, G, key_nodes)
-                G.remove_edge(u, v)
-                if u_gone:
-                    key_nodes.append(u)
-                if v_gone:
-                    key_nodes.append(v)
+            G.add_edge(u, v)
+            u_gone = False
+            v_gone = False
+            if k == G.degree(u):
+                key_nodes.remove(u)
+                u_gone = True
+            if k == G.degree(v):
+                key_nodes.remove(v)
+                v_gone = True
+            yield from kage_construction_backing_track(k, g, G, key_nodes)
+            G.remove_edge(u, v)
+            if u_gone:
+                key_nodes.append(u)
+            if v_gone:
+                key_nodes.append(v)
+
+def selection_candidatos(u, g, G, key_nodes):
+    nodos_prohibidos = nx.single_source_shortest_path_length(G, u, cutoff=g - 2)
+    candidatos = [v for v in key_nodes if v != u and v not in nodos_prohibidos and not G.has_edge(u, v)]
+    return candidatos
 
 def cage_add_node(k, g, G, key_nodes):
     while len(key_nodes) != 0:
