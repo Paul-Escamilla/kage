@@ -16,15 +16,12 @@ def base_of_cage(k, g):             # Se crea un funcion que estructura un arbol
                     next_friend += 1       # Etiqueta los nuevos nodos                 
             friends_down = [amigos for amigos in range(nodos, nodos_acumulados)] # Enlista los nodos actuales (las hojas del arbol)
             nodos = nodos_acumulados   
-        G.add_nodes_from(range(nodos))  # Añade los respectivos nodos para cada nivel del arbol
     else:
         nodos = k + 1                              # Si k es impar, empezamos con un arbol de un nodo con k amigos
         friends_down = [i for i in range(1, k+1)]  # nodos actuales
         next_friend = k + 1                        # Desde ahi se empieza a etiquetar los nuevos nodos
-
-        for i in range(1, k + 1):            # Corregir
+        for i in range(1, k + 1):
             G.add_edge(0, i)
-
         for i in range(1, int((g - 1) / 2)):
             nodos_acumulados = nodos + k*(k - 1)**i        # Parecido a cuando g es par pero k en vez de 2
             for j in friends_down:
@@ -33,10 +30,8 @@ def base_of_cage(k, g):             # Se crea un funcion que estructura un arbol
                     next_friend += 1
             friends_down = [amigos for amigos in range(nodos, nodos_acumulados)]
             nodos = nodos_acumulados
-        G.add_nodes_from(range(nodos))     # Añade los respectivos nodos para cada nivel del arbol
     key_nodes = friends_down
     return G, key_nodes
-
 
 def kage_construction_backing_track(k, g, G = None, key_nodes = None):
     if G == None:
@@ -85,14 +80,11 @@ def cage_add_node(k, g, G, key_nodes):
 
 def add_node(k, g, G, key_nodes):
     nuevo = G.number_of_nodes()
-    G.add_node(nuevo)
     G.add_edge(nuevo - 1, nuevo)
     key_nodes.append(nuevo)
     if k % 2 == 1:
-        nuevo2 = nuevo + 1                 # Agregar otro nodo y conectarlo con el anterior
-        G.add_node(nuevo2)
-        G.add_edge(nuevo, nuevo2)
-        key_nodes.append(nuevo2)
+        G.add_edge(nuevo, nuevo + 1)
+        key_nodes.append(nuevo + 1)
     return G, key_nodes
 
 def jaula(k, g):
