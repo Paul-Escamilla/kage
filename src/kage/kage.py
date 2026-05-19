@@ -49,20 +49,9 @@ def kage_construction_backing_track(k, g, G = None, key_nodes = None):
         #candidatos.sort(key=lambda v: G.degree(v))   # orden ascendente de grado
         for v in candidatos:
             G.add_edge(u, v)
-            u_gone = False
-            v_gone = False
-            if k == G.degree(u):
-                key_nodes.remove(u)
-                u_gone = True
-            if k == G.degree(v):
-                key_nodes.remove(v)
-                v_gone = True
-            yield from kage_construction_backing_track(k, g, G, key_nodes)
+            next_key_nodes = [nodo for nodo in key_nodes if G.degree(nodo) < k]
+            yield from kage_construction_backing_track(k, g, G, next_key_nodes)
             G.remove_edge(u, v)
-            if u_gone:
-                key_nodes.append(u)
-            if v_gone:
-                key_nodes.append(v)
 
 def selection_candidatos(u, g, G, key_nodes):
     nodos_prohibidos = nx.single_source_shortest_path_length(G, u, cutoff=g - 2)
