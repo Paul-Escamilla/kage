@@ -1,185 +1,275 @@
 import networkx as nx
-import numpy as np
+from collections import deque
+from itertools import combinations
 
-def base_tree(k, g):
-    G = nx.Graph()
 
-    # label dictionary
-    etiquetas = {}
+# ============================================================
+# COTA DE MOORE
+# ============================================================
 
-    # Case g == 2*n
-    if g % 2 == 0:
-        nodos = 2
-        friends_down = [0, 1]
-        next_friend = 2
+def moore_bound(k, g):
+    """
+    Calcula la cota inferior de Moore para una (k,g)-jaula.
+    """
 
-        # raíces
-        G.add_edge(0, 1)
-        etiquetas[0] = [0]
-        etiquetas[1] = [1]
+    if g % 2 == 1:
+        # g impar
+        r = (g - 3) // 2
+        total = 1
 
-        for _ in range(1, g // 2):
-            nuevos = []
+        for i in range(r + 1):
+            if i == 0:
+                total += k
+            else:
+                total += k * (k - 1) ** i
 
-            for i in friends_down:
-                for idx in range(k - 1):
-                    G.add_edge(i, next_friend)
+        return total
 
-                    # label construction
-                    etiquetas[next_friend] = etiquetas[i] + [idx]
-
-                    nuevos.append(next_friend)
-                    next_friend += 1
-
-            friends_down = nuevos
-            nodos = next_friend
-
-    # Case g == 2*n + 1
     else:
-        nodos = k + 1
-        friends_down = [i for i in range(1, k + 1)]
-        next_friend = k + 1
+        # g par
+        r = g // 2 - 1
+        total = 0
 
-        etiquetas[0] = [0]
+        for i in range(r + 1):
+            total += (k - 1) ** i
 
-        # frist level
-        for i in range(1, k + 1):
-            G.add_edge(0, i)
-            etiquetas[i] = [0, i - 1]
+        return 2 * total
 
-        for i in range((g - 1) // 2 - 1):
-            nuevos = []
 
-            for j in friends_down:
-                for idx in range(k - 1):
-                    G.add_edge(j, next_friend)
+# ============================================================
+# BFS PARA VERIFICAR EL CUELLO
+# ============================================================
 
-                    etiquetas[next_friend] = etiquetas[j] + [idx]
-
-                    nuevos.append(next_friend)
-                    next_friend += 1
-
-            friends_down = nuevos
-            nodos = next_friend
-
-    # Save labels
-    nx.set_node_attributes(G, etiquetas, "etiqueta")
-
-    return G
-
-def obtener_hojas(G):
-    # create a list of leafs
-    return [n for n in G.nodes() if G.degree(n) == 1]
-
-# SEGUNDA ENTRADA DE LA ETIQUETA
-def segunda_entrada(etiquetas, v):
-    et = etiquetas[v]
-    if len(et) < 2:
-        return None
-    else:
-        return et[1]
-
-# DISTANCIAS DESDE UN NODO
-def calcular_distancias(G, origen):
+def edge_is_safe(G, u, v, g):
     """
-    Calcula todas las distancias más cortas desde un nodo origen.
-    """
-    return nx.single_source_shortest_path_length(G, origen)
+    Verifica si agregar la arista (u,v)
+    crea un ciclo de longitud menor que g.
 
-# VERIFICAR SI SE PUEDE AGREGAR UNA ARISTA
-def es_valida(distancias, v, g):
+    Se hace BFS desde u hasta profundidad g-2.
     """
-    Verifica si la distancia cumple la condición de girth.
-    """
-    d = distancias.get(v, float("inf"))
-    return d >= g - 1
 
-# FILTRAR CANDIDATOS POR ETIQUETA
-def filtrar_candidatos(hojas, hoja_base, etiquetas):
-    """
-    Filtra nodos candidatos que:
-    - No sean la hoja base
-    - Tengan distinta segunda etiqueta
-    - No repitan segunda etiqueta
-    """
-    s_base = segunda_entrada(etiquetas, hoja_base)
-    usados = set()
-    candidatos = []
+    if u == v:
+        return False
 
-    for v in hojas:
-        if v == hoja_base:
+    if G.has_edge(u, v):
+        return False
+
+    visited = {u}
+    queue = deque([(u, 0)])
+
+    while queue:
+
+        node, dist = queue.popleft()
+
+        if dist >= g - 2:
             continue
 
-        s = segunda_entrada(etiquetas, v)
+        for neighbor in G.neighbors(node):
 
-        if s != s_base and s not in usados:
-            candidatos.append(v)
-            usados.add(s)
+            if neighbor == v:
+                return False
 
-    return candidatos
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append((neighbor, dist + 1))
 
-# CONECTAR UNA HOJA CON RESTRICCIONES
-def conectar_hoja(G, hoja, hojas, etiquetas, g, limite=None):
+    return True
+
+
+# ============================================================
+# VERIFICAR SI EL GRAFO ES k-REGULAR
+# ============================================================
+
+def is_k_regular(G, k):
     """
-    Conecta una hoja con otras hojas válidas.
-    
-    Parámetros:
-    - limite: número máximo de conexiones (None = sin límite)
+    Verifica si todos los vértices tienen grado k.
     """
-    distancias = calcular_distancias(G, hoja)
-    candidatos = filtrar_candidatos(hojas, hoja, etiquetas)
 
-    count = 0
+    return all(deg == k for _, deg in G.degree())
 
-    for v in candidatos:
-        if es_valida(distancias, v, g):
-            G.add_edge(hoja, v)
-            count += 1
 
-        if limite is not None and count >= limite:
-            break
+# ============================================================
+# SELECCIÓN RECURSIVA DE VECINOS
+# ============================================================
 
+def select_edges(G, u, candidates, needed, idx, chosen, k, g):
+    """
+    Selecciona exactamente 'needed' vértices
+    de la lista de candidatos.
+    """
+
+    # Caso base: ya elegimos suficientes vecinos
+    if len(chosen) == needed:
+
+        # Agregar aristas
+        added_edges = []
+
+        for v in chosen:
+            G.add_edge(u, v)
+            added_edges.append((u, v))
+
+        # Continuar backtracking
+        if backtrack(G, k, g, u + 1):
+            return True
+
+        # Retroceder
+        G.remove_edges_from(added_edges)
+
+        return False
+
+    # No hay más candidatos
+    if idx >= len(candidates):
+        return False
+
+    v = candidates[idx]
+
+    # ========================================================
+    # OPCIÓN 1: incluir v
+    # ========================================================
+
+    if edge_is_safe(G, u, v, g):
+
+        G.add_edge(u, v)
+
+        if select_edges(
+            G,
+            u,
+            candidates,
+            needed,
+            idx + 1,
+            chosen + [v],
+            k,
+            g
+        ):
+            return True
+
+        G.remove_edge(u, v)
+
+    # ========================================================
+    # OPCIÓN 2: no incluir v
+    # ========================================================
+
+    return select_edges(
+        G,
+        u,
+        candidates,
+        needed,
+        idx + 1,
+        chosen,
+        k,
+        g
+    )
+
+
+# ============================================================
+# BACKTRACK PRINCIPAL
+# ============================================================
+
+def backtrack(G, k, g, u=0):
+    """
+    Construcción recursiva del grafo.
+    """
+
+    n = G.number_of_nodes()
+
+    # ========================================================
+    # TODOS LOS VÉRTICES PROCESADOS
+    # ========================================================
+
+    if u >= n:
+        return is_k_regular(G, k)
+
+    # ========================================================
+    # SI EL VÉRTICE YA TIENE GRADO k
+    # ========================================================
+
+    if G.degree(u) == k:
+        return backtrack(G, k, g, u + 1)
+
+    needed = k - G.degree(u)
+
+    # ========================================================
+    # GENERAR CANDIDATOS
+    # ========================================================
+
+    candidates = []
+
+    for v in range(u + 1, n):
+
+        if G.degree(v) >= k:
+            continue
+
+        if edge_is_safe(G, u, v, g):
+            candidates.append(v)
+
+    # Poda
+    if len(candidates) < needed:
+        return False
+
+    # ========================================================
+    # SELECCIONAR VECINOS
+    # ========================================================
+
+    return select_edges(
+        G,
+        u,
+        candidates,
+        needed,
+        0,
+        [],
+        k,
+        g
+    )
+
+
+# ============================================================
 # FUNCIÓN PRINCIPAL
-def conectar_hojas_girth(G, k, g):
+# ============================================================
+
+def build_cage(k, g, max_n=30):
     """
-    Conecta hojas de un grafo respetando restricciones de girth
-    y etiquetas.
+    Busca una (k,g)-jaula incrementando n
+    desde la cota de Moore.
     """
-    etiquetas = nx.get_node_attributes(G, "etiqueta")
-    hojas = obtener_hojas(G)
 
-    if not hojas:
-        return G
+    n0 = moore_bound(k, g)
 
-    # PRIMERA HOJA (CONTROLADA)
-    conectar_hoja(G, hojas[0], hojas, etiquetas, g, limite=k - 1)
+    for n in range(n0, max_n + 1):
 
-    # RESTO DE HOJAS
-    for hoja in hojas[1:]:
-        conectar_hoja(G, hoja, hojas, etiquetas, g)
+        print(f"Intentando n = {n}")
 
-    return G
+        G = nx.Graph()
+        G.add_nodes_from(range(n))
 
-def draw_kage(G):
-    fig, axes = plt.subplots(2, 2, figsize=(15, 15))
-    ax = axes.flatten()
-    opciones = {
-        "node_color": "lightblue",
-        "node_size": 400,
-        "font_size": 10,
-        "font_weight": "bold",
-        "edge_color": "gray",
-        "alpha": 0.8
-    }
-    layouts = [
-        (nx.kamada_kawai_layout, "Kamada-Kawai (Energía)"),
-        (nx.spectral_layout, "Espectral (Matrices)"),
-        (lambda g: nx.spring_layout(g, k=0.8, iterations=100), "Spring Layout (Resortes)"),
-        (nx.circular_layout, "Circular (Regularidad)")
-    ]
-    for i, (layout_func, title) in enumerate(layouts):
-        pos = layout_func(G)
-        nx.draw(G, pos, ax=ax[i], with_labels=True, **opciones)
-        ax[i].set_title(title, fontsize=14)
-    plt.tight_layout()
-    plt.show()    
+        success = backtrack(G, k, g)
+
+        if success:
+
+            print(f"\nJaula encontrada con n = {n}")
+            return G
+
+    return None
+
+
+# ============================================================
+# VISUALIZACIÓN
+# ============================================================
+
+def draw_graph(G):
+    """
+    Dibuja el grafo usando NetworkX.
+    """
+
+    import matplotlib.pyplot as plt
+
+    pos = nx.spring_layout(G, seed=42)
+
+    nx.draw(
+        G,
+        pos,
+        with_labels=True,
+        node_size=700,
+        font_size=12
+    )
+
+    plt.show()
