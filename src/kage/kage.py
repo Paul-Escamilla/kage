@@ -33,7 +33,7 @@ def base_of_cage(k, g):             # Se crea un funcion que estructura un arbol
     key_nodes = friends_down
     return G, key_nodes
 
-def kage_construction_backing_track(k, g, G = None, key_nodes = None):
+def kage_construction_backing_track(k, g, G = None, key_nodes = None, first_step = True):
     if G == None:
         G, key_nodes = base_of_cage(k, g)
     if len(key_nodes) == 0:
@@ -45,14 +45,20 @@ def kage_construction_backing_track(k, g, G = None, key_nodes = None):
     else:
         u = key_nodes[-1]
         #u = min(key_nodes, key=lambda x: G.degree(x))   # el de menor grado
-        candidatos = selection_candidatos(u, g, G, key_nodes)           #Añadi una podada (pruning)   (posibles cambios)
+        if first_step:
+            if g%2 == 0:
+                candidatos = [v for v in key_nodes[:len(key_nodes) // 2]]
+            else:
+                candidatos = [v for v in key_nodes[:len(key_nodes) // k]]
+        else:
+            candidatos = selection_candidatos(u, g, G, key_nodes)           #Añadi una podada (pruning)   (posibles cambios)
         if len(candidatos) < (k - G.degree(u)):
             return
         candidatos.sort(key=lambda v: G.degree(v), reverse=True)
         for v in candidatos:
             G.add_edge(u, v)
             next_key_nodes = [nodo for nodo in key_nodes if G.degree(nodo) < k]
-            yield from kage_construction_backing_track(k, g, G, next_key_nodes)
+            yield from kage_construction_backing_track(k, g, G, next_key_nodes, False)
             G.remove_edge(u, v)
 
 def selection_candidatos(u, g, G, key_nodes):
