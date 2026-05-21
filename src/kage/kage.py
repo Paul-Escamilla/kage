@@ -46,7 +46,9 @@ def kage_construction_backing_track(k, g, G = None, key_nodes = None):
         u = key_nodes[-1]
         #u = min(key_nodes, key=lambda x: G.degree(x))   # el de menor grado
         candidatos = selection_candidatos(u, g, G, key_nodes)           #Añadi una podada (pruning)   (posibles cambios)
-        #candidatos.sort(key=lambda v: G.degree(v))   # orden ascendente de grado
+        if len(candidatos) < (k - G.degree(u)):
+            return
+        candidatos.sort(key=lambda v: G.degree(v), reverse=True)
         for v in candidatos:
             G.add_edge(u, v)
             next_key_nodes = [nodo for nodo in key_nodes if G.degree(nodo) < k]
@@ -69,10 +71,10 @@ def cage_add_node(k, g, G, key_nodes):
 
 def add_node(k, g, G, key_nodes):
     nuevo = G.number_of_nodes()
-    G.add_edge(nuevo - 1, nuevo)
+    G.add_node(nuevo)
     key_nodes.append(nuevo)
     if k % 2 == 1:
-        G.add_edge(nuevo, nuevo + 1)
+        G.add_node(nuevo + 1)
         key_nodes.append(nuevo + 1)
     return G, key_nodes
 
