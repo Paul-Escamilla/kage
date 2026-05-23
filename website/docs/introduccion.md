@@ -56,3 +56,4 @@ Las gráficas que logran igualar exactamente esta cota inferior teórica se cono
 En el contexto de nuestro algoritmo de backtracking, la Cota de Moore es una herramienta de optimización crucial: nos dicta el tamaño inicial del conjunto de vértices a explorar, ya que sabemos matemáticamente que es imposible construir una $(k, g)$-jaula con un número de vértices menor al que indica esta fórmula.
 
 ## Algoritmo 
+

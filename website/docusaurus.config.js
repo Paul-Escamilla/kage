@@ -1,6 +1,6 @@
-const {themes} = require('prism-react-renderer');
-const remarkMath = require('remark-math');
-const rehypeKatex = require('rehype-katex');
+import {themes as prismThemes} from 'prism-react-renderer';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -9,14 +9,14 @@ const config = {
   favicon: 'img/favicon.ico',
 
   url: 'https://paul-escamilla.github.io',
-  baseUrl: '/kage/', // El nombre de tu repositorio
+  baseUrl: '/kage/',
   organizationName: 'paul-escamilla', 
   projectName: 'kage',
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  // Eliminamos onBrokenMarkdownLinks de aquí para evitar la advertencia
 
   i18n: {
     defaultLocale: 'es',
@@ -64,10 +64,10 @@ const config = {
         copyright: `Copyright © ${new Date().getFullYear()} Kage Project. Built with Docusaurus.`,
       },
       prism: {
-        theme: themes.github,
-        darkTheme: themes.dracula,
+        theme: prismThemes.github,
+        darkTheme: prismThemes.dracula,
       },
     }),
 };
 
-module.exports = config;
+export default config;
