@@ -19,6 +19,7 @@ class CageBuilder:
             p, h = (u, v) if u < v else (v, u)
             self.parent_map[h] = p
 
+    # Constructor del arbol de los vertices minimos necesarios
     def _base_of_cage(self, k, g):
         G = nx.Graph()
         if g % 2 == 0:
@@ -30,6 +31,7 @@ class CageBuilder:
             hojas = [0]
             capas = (g - 1) // 2
 
+    # Generando las nuevas ramas a partir de cada hoja previa
         for _ in range(capas):
             proximas = []
             for padre in hojas:
@@ -41,6 +43,7 @@ class CageBuilder:
             hojas = proximas
         return G
 
+    # Determina si al conectar 2 vertices no produce un ciclo menor a g
     def calcular_compatibles(self):
         # Todos los nodos que necesitan aristas (incluyendo los de exceso)
         necesitados = [n for n in self.G.nodes() if self.G.degree(n) < self.k and n != 0]
@@ -49,6 +52,7 @@ class CageBuilder:
         for u in necesitados:
             cam_u = self.caminos_fijos.get(u, None)
 
+    # Evita que se produzcan auto ciclos
             for v in necesitados:
                 if u >= v: continue
 
@@ -68,18 +72,23 @@ class CageBuilder:
                     compatibles[v].append(u)
         return compatibles
 
+    # Agrega aristas recursivamente a vertices disponibles
     def _backtrack(self, compatibles):
+    # Toma vertices que no tienen grado k
         necesitados = [n for n in self.G.nodes() if self.G.degree(n) < self.k and n != 0]
         if not necesitados:
             return True
 
         # Heurística MRV: Nodo con mayor grado (más cerca de completarse)
         u = max(necesitados, key=lambda n: self.G.degree(n))
+    # Detecta si al conectar nodos se producen ciclos menores a g
         peligro = nx.single_source_shortest_path_length(self.G, source=u, cutoff=self.g-2)
 
+    # Conjuntos de conexiones equivalentes
         hermanas_probadas = set()
 
         for v in compatibles.get(u, []):
+    # Filtra a los vertices eliminando los que producen ciclos menores a g
             if self.G.degree(v) >= self.k or self.G.has_edge(u, v) or v in peligro:
                 continue
 
@@ -101,14 +110,17 @@ class CageBuilder:
                     # Contamos cuántos candidatos reales le quedan a este nodo
                     cands_reales = 0
                     # Usamos una versión ligera de la validación
+    # Verificacion de candidatos validos restantes
                     for c in compatibles.get(nodo, []):
                         if self.G.degree(c) < self.k and not self.G.has_edge(nodo, c):
                             cands_reales += 1
 
+    # Si no hay suficientes candidatos requiere de mayor cantidad de vertices (Pasa a agregar vertices)
                     if cands_reales < grado_faltante:
                         posible = False
                         break
 
+    # Continua con la recursión
             if posible and self._backtrack(compatibles):
                 return True
 
@@ -131,6 +143,7 @@ class CageBuilder:
             # IMPORTANTE: No añadimos aristas aquí.
             # El nodo entra "limpio" para que el backtracking tenga libertad total.
 
+    # Si se agregan 2 vertices se conectan entre si
         if len(nuevos) == 2:
             self.G.add_edge(nuevos[0], nuevos[1]) # Add edge between new nodes if two
 
@@ -153,14 +166,18 @@ class CageBuilder:
             compatibles = self.calcular_compatibles()
 
             start = time.time()
+
+    # Intenta completar la grafica
             if self._backtrack(compatibles):
                 print(f"¡ÉXITO! Tiempo: {time.time()-start:.2f}s")
                 return self.G
 
+    # Agrega vertices extra cuando no es posible la jaula con solo el arbol base
             print(f"Fallo. Añadiendo exceso...")
             self.add_vertices_exceso()
         return self.G
 
+# Dibuja la grafica mediante layouts que permiten distinguir las conexiones
     def draw_kage(self):
         fig, axes = plt.subplots(2, 2, figsize=(15, 15))
         ax = axes.flatten()
