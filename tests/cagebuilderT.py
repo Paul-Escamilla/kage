@@ -1,11 +1,10 @@
 import os
 import sys
 
-# Añadir `src` al PYTHONPATH para poder importar el paquete `kage`
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-
-from kage.CageBuilder import CageBuilder
-
+from CageBuilder import CageBuilder
+import networkx as nx
+import matplotlib.pyplot as plt
 def test_cage():
     k_val = 3
     g_val = 7
