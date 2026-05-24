@@ -149,13 +149,13 @@ class CageBuilder:
 
         # Anclaje al árbol (Puente entre ramas lejanas) - This part was moved from the solve method
         hojas_m = [n for n in self.M.nodes() if self.M.degree(n) == 1 and n != 0]
-     for i, extra in enumerate(nuevos):
-          if hojas_m:
-              # Sumamos el exceso actual para que en cada iteración de solve() 
-              # se empiece desde un punto diferente de la lista de hojas.
-              salto = (i * (len(hojas_m) // 2)) + self.exceso
-              target = hojas_m[salto % len(hojas_m)]
-              self.G.add_edge(extra, target)
+        for i, extra in enumerate(nuevos):
+            if hojas_m:
+                # Sumamos el exceso actual para que en cada iteración de solve()
+                # se empiece desde un punto diferente de la lista de hojas.
+                salto = (i * (len(hojas_m) // 2)) + self.exceso
+                target = hojas_m[salto % len(hojas_m)]
+                self.G.add_edge(extra, target)
 
         self.exceso += cantidad
 
