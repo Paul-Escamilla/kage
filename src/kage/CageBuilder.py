@@ -148,7 +148,7 @@ class CageBuilder:
             self.G.add_edge(nuevos[0], nuevos[1]) # Add edge between new nodes if two
 
         # Anclaje al árbol (Puente entre ramas lejanas) - This part was moved from the solve method
-        hojas_m = [n for n in self.M.nodes() if self.M.degree(n) == 1 and n != 0]
+        hojas_m = [n for n in self.M.nodes() if self.M.degree(n) == 1]
         for i, extra in enumerate(nuevos):
             if hojas_m:
                 # Sumamos el exceso actual para que en cada iteración de solve()
