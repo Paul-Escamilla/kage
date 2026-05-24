@@ -1,4 +1,4 @@
-# Kage 🕸️
+# Kage 
 
 En este repositorio se desarrolla un algoritmo eficiente para la creación de **jaulas** apoyado en la técnica de **backtracking** (vuelta atrás).
 
@@ -9,4 +9,4 @@ Toda la teoría, conceptos matemáticos (como la Cota de Moore) y la explicació
 👉 **[Visitar la documentación de Kage](https://paul-escamilla.github.io/kage/)**
 
 ---
-*Desarrollado por Paul Escamilla.*
+*Desarrollado por Paul Escamilla, Axel Yael, Fernando Gualito y Alexis Sanchez.*
