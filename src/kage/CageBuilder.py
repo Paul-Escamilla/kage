@@ -5,6 +5,10 @@ import time
 
 class CageBuilder:
     def __init__(self, k, g):
+        if k < 2:
+            raise ValueError("El grado (k) debe ser al menos 2.")
+        if g < 3:
+            raise ValueError("El cuello (g) debe ser al menos 3.")
         self.k = k
         self.g = g
         self.G = self._base_of_cage(k, g)
@@ -51,35 +55,20 @@ class CageBuilder:
     # cycles smaller than the target girth g
     def calcular_compatibles(self):
 
-        # Leaves that still require additional edges
-        # (including excess leaves)
         necesitados = [n for n in self.G.nodes() if self.G.degree(n) < self.k and n != 0]
+
         compatibles = {n: [] for n in necesitados}
 
         for u in necesitados:
-            cam_u = self.caminos_fijos.get(u, None)
-
-            # Prevent self-cycles
             for v in necesitados:
-                if u >= v: continue
 
-                cam_v = self.caminos_fijos.get(v, None)
+                # Avoid duplicate pairs and self-connections
+                if u >= v:
+                    continue
 
-                # Case A:
-                # Both leaves belong to the original tree
-                # Compatibility is checked using path intersection
-                if cam_u is not None and cam_v is not None:
-                    if cam_u.intersection(cam_v) == {0}:
-                        compatibles[u].append(v)
-                        compatibles[v].append(u)
+                compatibles[u].append(v)
+                compatibles[v].append(u)
 
-                # Case B:
-                # At least one leaf belongs to the excess set
-                # These leaves are considered compatible by default
-                # Backtracking safety checks will handle conflicts
-                else:
-                    compatibles[u].append(v)
-                    compatibles[v].append(u)
         return compatibles
 
     # Recursive backtracking edge construction
@@ -230,3 +219,44 @@ class CageBuilder:
             ax[i].set_title(title, fontsize=14)
         plt.tight_layout()
         plt.show()
+
+# Function for the user
+def cage(k, g, max_iter=10):
+    # Generate a (k, g)-cage graph.
+    # Returns    networkx.Graph
+
+    builder = CageBuilder(k, g)
+
+    return builder.solve(max_iter=max_iter)
+
+# Function to draw the graph as an object of networkx
+def draw_kage(G):
+
+    fig, axes = plt.subplots(2, 2, figsize=(15, 15))
+    ax = axes.flatten()
+    opciones = {
+        "node_color": "lightblue",
+        "node_size": 400,
+        "font_size": 10,
+        "font_weight": "bold",
+        "edge_color": "black",
+        "alpha": 0.8
+    }
+
+    layouts = [
+        (nx.kamada_kawai_layout, "Kamada-Kawai"),
+        (nx.spectral_layout, "Spectral"),
+        (lambda g: nx.spring_layout(g, k=0.8, iterations=100), "Spring"),
+        (nx.circular_layout, "Circular")
+    ]
+
+    for i, (layout_func, title) in enumerate(layouts):
+
+        pos = layout_func(G)
+
+        nx.draw(G, pos, ax=ax[i], with_labels=True, **opciones)
+
+        ax[i].set_title(title, fontsize=14)
+
+    plt.tight_layout()
+    plt.show()
