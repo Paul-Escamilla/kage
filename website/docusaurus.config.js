@@ -14,14 +14,9 @@ const config = {
   projectName: 'kage',
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
+  onBrokenLinks: 'throw',
 
-  onBrokenLinks: 'warn',
-  // Eliminamos onBrokenMarkdownLinks de aquí para evitar la advertencia
-
-  i18n: {
-    defaultLocale: 'es',
-    locales: ['es'],
-  },
+  i18n: { defaultLocale: 'es', locales: ['es'] },
 
   presets: [
     [
@@ -33,9 +28,7 @@ const config = {
           remarkPlugins: [remarkMath],
           rehypePlugins: [rehypeKatex],
         },
-        theme: {
-          customCss: './src/css/custom.css',
-        },
+        theme: { customCss: './src/css/custom.css' },
       }),
     ],
   ],
@@ -61,7 +54,7 @@ const config = {
       },
       footer: {
         style: 'dark',
-        copyright: `Copyright © ${new Date().getFullYear()} Kage Project. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Kage Project.`,
       },
       prism: {
         theme: prismThemes.github,
