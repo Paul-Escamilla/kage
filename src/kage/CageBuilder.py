@@ -5,6 +5,10 @@ import time
 
 class CageBuilder:
     def __init__(self, k, g):
+        if k < 2:
+            raise ValueError("El grado (k) debe ser al menos 2.")
+        if g < 3:
+            raise ValueError("El cuello (g) debe ser al menos 3.")
         self.k = k
         self.g = g
         self.G = self._base_of_cage(k, g)
