@@ -221,7 +221,7 @@ class CageBuilder:
         plt.show()
 
 # Function for the user
-def cage(k, g, max_iter=10):
+def kage(k, g, max_iter=10):
     # Generate a (k, g)-cage graph.
     # Returns    networkx.Graph
 
