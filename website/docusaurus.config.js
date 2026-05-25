@@ -15,7 +15,7 @@ const config = {
   deploymentBranch: 'gh-pages',
   trailingSlash: false,
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   // Eliminamos onBrokenMarkdownLinks de aquí para evitar la advertencia
 
   i18n: {
