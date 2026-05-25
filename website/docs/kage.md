@@ -3,7 +3,7 @@ sidebar_position: 1
 title: ¿Qué es el Proyecto Kage?
 ---
 
-# El Proyecto Kage 🕸️
+# El Proyecto Kage 
 
 Bienvenido a la documentación oficial de **Kage**. 
 
