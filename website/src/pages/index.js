@@ -12,15 +12,20 @@ function HomepageHeader() {
   return (
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
-        <Heading as="h1" className="hero__title">
-          {siteConfig.title}
+        {/* Aquí puedes agregar un logo si tienes uno en static/img/logo.png */}
+        {/* <img src="img/logo.png" width="150" style={{marginBottom: '20px'}} /> */}
+        
+        <Heading as="h1" className="hero__title" style={{color: '#ffffff'}}>
+          {siteConfig.title} 
         </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <p className="hero__subtitle" style={{color: '#cbd5e0', fontSize: '1.5rem'}}>
+          {siteConfig.tagline}
+        </p>
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/kage"> 
-            Explorar Documentación 🚀
+            to="/docs/kage"> {/* 👈 Asegúrate que coincida con tu nombre de archivo */}
+            Ver Documentación 
           </Link>
         </div>
       </div>

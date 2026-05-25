@@ -2,46 +2,56 @@ import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
+// Importa tus imágenes desde la carpeta static/img
+import MooreTreeImage from '@site/static/img/image_0.png';
+import BacktrackingImage from '@site/static/img/image_1.png';
+import CageResultImage from '@site/static/img/image_2.png';
+
 const FeatureList = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'La Cota de Moore (Árbol Base)',
+    // Usa el componente imported Image para renderizar la foto
+    Image: MooreTreeImage, 
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        El algoritmo toma como base el límite teórico inferior matemático. 
+        Construye un árbol base que se expande por capas para intentar garantizar 
+        la menor cantidad posible de vértices según el grado y el cuello.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Búsqueda por Backtracking',
+    Image: BacktrackingImage,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Implementa heurísticas avanzadas y técnicas de poda por isomorfismo. 
+        El sistema detecta callejones sin salida de forma temprana, 
+        evitando ciclos cortos y reduciendo drásticamente el tiempo de cómputo.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Visualización y Generación',
+    Image: CageResultImage,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Genera representaciones gráficas precisas de las jaulas resueltas. 
+        A través de la integración con NetworkX y Matplotlib, renderiza 
+        múltiples layouts matemáticos para analizar sus propiedades de simetría.
       </>
     ),
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({title, description, Image}) {
   return (
     <div className={clsx('col col--4')}>
+      {/* Centramos la imagen y le damos un tamaño adecuado */}
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        <img src={Image} className={styles.featureSvg} alt={title} style={{maxWidth: '200px', height: 'auto', marginTop: '2rem'}} />
       </div>
-      <div className="text--center padding-horiz--md">
+      <div className="text--center padding-horiz--md" style={{marginTop: '1rem'}}>
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
       </div>

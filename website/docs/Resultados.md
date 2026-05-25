@@ -1,9 +1,9 @@
 ---
 sidebar_position: 4
-title: 📊 Resultados y Rendimiento
+title: Resultados y Rendimiento
 ---
 
-# Resultados del Algoritmo 📊
+# Resultados del Algoritmo
 
 En esta sección presentamos los resultados obtenidos al ejecutar el algoritmo **Kage** para buscar distintas jaulas conocidas en la teoría de grafos. Gracias a las técnicas de poda implementadas, el algoritmo es capaz de encontrar estas estructuras en tiempos sumamente competitivos.
 
