@@ -51,35 +51,20 @@ class CageBuilder:
     # cycles smaller than the target girth g
     def calcular_compatibles(self):
 
-        # Leaves that still require additional edges
-        # (including excess leaves)
         necesitados = [n for n in self.G.nodes() if self.G.degree(n) < self.k and n != 0]
+
         compatibles = {n: [] for n in necesitados}
 
         for u in necesitados:
-            cam_u = self.caminos_fijos.get(u, None)
-
-            # Prevent self-cycles
             for v in necesitados:
-                if u >= v: continue
 
-                cam_v = self.caminos_fijos.get(v, None)
+                # Avoid duplicate pairs and self-connections
+                if u >= v:
+                    continue
 
-                # Case A:
-                # Both leaves belong to the original tree
-                # Compatibility is checked using path intersection
-                if cam_u is not None and cam_v is not None:
-                    if cam_u.intersection(cam_v) == {0}:
-                        compatibles[u].append(v)
-                        compatibles[v].append(u)
+                compatibles[u].append(v)
+                compatibles[v].append(u)
 
-                # Case B:
-                # At least one leaf belongs to the excess set
-                # These leaves are considered compatible by default
-                # Backtracking safety checks will handle conflicts
-                else:
-                    compatibles[u].append(v)
-                    compatibles[v].append(u)
         return compatibles
 
     # Recursive backtracking edge construction
