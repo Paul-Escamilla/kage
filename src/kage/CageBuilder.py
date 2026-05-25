@@ -160,20 +160,21 @@ class CageBuilder:
         self.exceso += cantidad
 
     def solve(self, max_iter=10):
-        print(f"Buscando Jaula ({self.k}, {self.g})...")
+        print(f"Construyendo Jaula ({self.k}, {self.g})...")
         for i in range(max_iter):
-            print(f"Intento {i+1}: Nodos={len(self.G.nodes())}, Exceso={self.exceso}")
+            print(f"Iteración {i+1}: Vertices={len(self.G.nodes())}, Vertices extra={self.exceso}")
             compatibles = self.calcular_compatibles()
 
+    # Cronometro para el tiempo de generación de la grafica
             start = time.time()
 
     # Intenta completar la grafica
             if self._backtrack(compatibles):
-                print(f"¡ÉXITO! Tiempo: {time.time()-start:.2f}s")
+                print(f"¡ÉXITO! Tiempo de construcción: {time.time()-start:.2f}s")
                 return self.G
 
     # Agrega vertices extra cuando no es posible la jaula con solo el arbol base
-            print(f"Fallo. Añadiendo exceso...")
+            print(f"Fallo. Añadiendo vertices extras...")
             self.add_vertices_exceso()
         return self.G
 
