@@ -1,62 +1,74 @@
 /**
- * Paleta de Colores - Proyecto Kage (Adobe Express)
+ * Paleta de Colores - Proyecto Kage (Tema Azul Profundo de Iliana Vargas)
  */
 
- :root {
-  /* Azul brillante para links y elementos interactivos principales */
-  --ifm-color-primary: #8EB9FC;
-  --ifm-color-primary-dark: #6fa2f3;
-  --ifm-color-primary-darker: #5f95f0;
-  --ifm-color-primary-darkest: #3f7beb;
-  --ifm-color-primary-light: #adcbfd;
-  --ifm-color-primary-lighter: #bdd4fe;
-  --ifm-color-primary-lightest: #edf4ff;
+:root {
+  /* Azul eléctrico principal para botones, enlaces e interacciones (#023BE6) */
+  --ifm-color-primary: #023BE6;
+  --ifm-color-primary-dark: #0232cc;
+  --ifm-color-primary-darker: #022fb3;
+  --ifm-color-primary-darkest: #01217d;
+  --ifm-color-primary-light: #3567f7;
+  --ifm-color-primary-lighter: #4e7bf8;
+  --ifm-color-primary-lightest: #9cb5fc;
 
-  /* Color de fondo general (Gris muy claro/blanco suave) */
-  --ifm-background-color: #f8f9fa;
+  /* Fondo de la página (un gris/azul extremadamente limpio para que no canse la vista) */
+  --ifm-background-color: #f4f6fa;
   
-  /* Color del texto principal (Tu gris oscuro #5C697D) */
-  --ifm-font-color-base: #5C697D;
-
-  /* Encabezados y títulos principales en un tono más fuerte */
-  --ifm-heading-color: #4A5568;
-
-  /* Fondo de la barra lateral (Sidebar) usando tu gris intermedio #99A7BD */
-  --ifm-menu-color-background-active: #edf2f7;
+  /* Color del texto principal (Gris oscuro elegante para combinar con el azul) */
+  --ifm-font-color-base: #2d3748;
+  --ifm-heading-color: #011142;
 }
 
-/* Modificar la barra de navegación superior (Navbar) */
+/* Barra de navegación superior: Usará tu azul intermedio premium #01258F */
 .navbar {
-  background-color: var(--ifm-color-primary); /* Azul #8EB9FC */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background-color: #01258F;
+  box-shadow: 0 4px 12px rgba(1, 17, 66, 0.15);
 }
 
 .navbar__title, .navbar__item {
-  color: #ffffff !important; /* Texto blanco para que resalte sobre el azul */
-  font-weight: bold;
+  color: #ffffff !important;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Efecto al pasar el cursor sobre los links de arriba */
+.navbar__item:hover {
+  color: #9cb5fc !important;
 }
 
 .navbar__item--active {
-  background-color: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+  background-color: #023BE6; /* Resalta el activo con el azul eléctrico */
+  border-radius: 6px;
 }
 
-/* Estilizar las cajas de alertas / Admonitions (Consejos Técnicos) usando tu Amarillo #FCD88D */
-.theme-admonition-tip {
-  --ifm-alert-border-color: #FCD88D;
-  --ifm-alert-background-color: #FFFDF5;
-  border-left-width: 5px;
-}
-
-/* Modificar el menú lateral izquierdo */
+/* Modificar el menú lateral izquierdo de documentación */
 .menu__link--active {
-  background-color: #99A7BD !important; /* Tu gris intermedio */
-  color: #ffffff !important; /* Texto blanco en el enlace activo */
+  background-color: #011C6B !important; /* Tu azul rey #011C6B */
+  color: #ffffff !important;
+  font-weight: bold;
 }
 
-/* El pie de página (Footer) con tu color gris de base oscura #A7A296 */
+.menu__link:hover {
+  background-color: rgba(2, 59, 230, 0.08);
+  color: #023BE6;
+}
+
+/* Las cajas de alertas (Admonitions / Consejos) combinadas con el estilo azul */
+.theme-admonition-tip {
+  --ifm-alert-border-color: #0231BD; /* Tu azul #0231BD */
+  --ifm-alert-background-color: #f0f4ff;
+  color: #011142;
+}
+
+/* El pie de página (Footer) con tu azul marino más profundo #011142 */
 .footer {
-  --ifm-footer-background-color: #A7A296;
-  --ifm-footer-color: #ffffff;
-  --ifm-footer-link-color: #edf2f7;
+  --ifm-footer-background-color: #011142;
+  --ifm-footer-color: #e2e8f0;
+  --ifm-footer-link-color: #9cb5fc;
+  border-top: 3px solid #023BE6;
+}
+
+.footer__title {
+  color: #ffffff !important;
 }
