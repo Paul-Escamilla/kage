@@ -35,10 +35,8 @@ const config = {
 
   stylesheets: [
     {
-      href: 'https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css',
+      href: 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css',
       type: 'text/css',
-      integrity: 'sha384-odtC+0UGzzFL/6PNoE8rX/SPcQWSi9PQPg5kh7R26TVZNoS80uSBr4VM/HzAS26L',
-      crossorigin: 'anonymous',
     },
   ],
 
