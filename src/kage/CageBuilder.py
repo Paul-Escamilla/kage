@@ -219,3 +219,44 @@ class CageBuilder:
             ax[i].set_title(title, fontsize=14)
         plt.tight_layout()
         plt.show()
+
+# Function for the user
+def cage(k, g, max_iter=10):
+    # Generate a (k, g)-cage graph.
+    # Returns    networkx.Graph
+
+    builder = CageBuilder(k, g)
+
+    return builder.solve(max_iter=max_iter)
+
+# Function to draw the graph as an object of networkx
+def draw_kage(G):
+
+    fig, axes = plt.subplots(2, 2, figsize=(15, 15))
+    ax = axes.flatten()
+    opciones = {
+        "node_color": "lightblue",
+        "node_size": 400,
+        "font_size": 10,
+        "font_weight": "bold",
+        "edge_color": "black",
+        "alpha": 0.8
+    }
+
+    layouts = [
+        (nx.kamada_kawai_layout, "Kamada-Kawai"),
+        (nx.spectral_layout, "Spectral"),
+        (lambda g: nx.spring_layout(g, k=0.8, iterations=100), "Spring"),
+        (nx.circular_layout, "Circular")
+    ]
+
+    for i, (layout_func, title) in enumerate(layouts):
+
+        pos = layout_func(G)
+
+        nx.draw(G, pos, ax=ax[i], with_labels=True, **opciones)
+
+        ax[i].set_title(title, fontsize=14)
+
+    plt.tight_layout()
+    plt.show()
